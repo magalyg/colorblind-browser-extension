@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "ColorBlind Accessibility Filter",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Modify webpage colors to improve accessibility for colorblind individuals.",
   "permissions": ["storage", "activeTab", "scripting"],
   "action": {
@@ -23,5 +23,11 @@
     "16": "icons/icon16.png",
     "48": "icons/icon48.png",
     "128": "icons/icon128.png"
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "colorblind-filter@magaly.dev",
+      "strict_min_version": "109.0"
+    }
   }
 }

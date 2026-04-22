@@ -15,7 +15,7 @@ buttons.forEach(btn => {
     chrome.storage.sync.set({ mode });
 
     const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-    if (!tab) return;
+    if (!tab || !tab.url || tab.url.startsWith('about:') || tab.url.startsWith('moz-extension://')) return;
     try {
       await chrome.tabs.sendMessage(tab.id, { action: 'setMode', mode });
     } catch {

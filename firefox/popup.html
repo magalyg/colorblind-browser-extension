@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #f8fafc;
+      color: #1e293b;
+      width: 310px;
+      padding: 16px;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 14px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    header .icon { font-size: 20px; }
+
+    header h1 {
+      font-size: 14px;
+      font-weight: 600;
+      color: #0f172a;
+    }
+
+    .modes { display: flex; flex-direction: column; gap: 6px; }
+
+    .mode-btn {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      padding: 10px 12px;
+      background: #fff;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+    }
+
+    .mode-btn:hover { border-color: #93c5fd; background: #eff6ff; }
+
+    .mode-btn.active {
+      background: #2563eb;
+      border-color: #2563eb;
+    }
+
+    .mode-btn .label {
+      font-size: 13px;
+      font-weight: 500;
+      color: #1e293b;
+    }
+
+    .mode-btn.active .label { color: #fff; }
+
+    .palette {
+      display: flex;
+      gap: 5px;
+      flex-shrink: 0;
+    }
+
+    .swatch {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      display: inline-block;
+      border: 1px solid rgba(0,0,0,0.08);
+    }
+  </style>
+</head>
+<body>
+  <!-- Inline SVG filter definitions — referenced by each palette row -->
+  <svg style="position:absolute;width:0;height:0;overflow:hidden" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <filter id="f-deuteranopia">
+        <feColorMatrix type="matrix" values="0.625 0.375 0 0 0  0.700 0.300 0 0 0  0 0.300 0.700 0 0  0 0 0 1 0"/>
+      </filter>
+      <filter id="f-protanopia">
+        <feColorMatrix type="matrix" values="0.567 0.433 0 0 0  0.558 0.442 0 0 0  0 0.242 0.758 0 0  0 0 0 1 0"/>
+      </filter>
+      <filter id="f-tritanopia">
+        <feColorMatrix type="matrix" values="0.950 0.050 0 0 0  0 0.433 0.567 0 0  0 0.475 0.525 0 0  0 0 0 1 0"/>
+      </filter>
+      <filter id="f-achromatopsia">
+        <feColorMatrix type="matrix" values="0.299 0.587 0.114 0 0  0.299 0.587 0.114 0 0  0.299 0.587 0.114 0 0  0 0 0 1 0"/>
+      </filter>
+    </defs>
+  </svg>
+
+  <header>
+    <span class="icon">👁</span>
+    <h1>ColorBlind Filter</h1>
+  </header>
+
+  <div class="modes">
+    <button class="mode-btn" data-mode="none">
+      <span class="label">None</span>
+      <div class="palette">
+        <span class="swatch" style="background:#EF4444"></span>
+        <span class="swatch" style="background:#F97316"></span>
+        <span class="swatch" style="background:#EAB308"></span>
+        <span class="swatch" style="background:#22C55E"></span>
+        <span class="swatch" style="background:#3B82F6"></span>
+        <span class="swatch" style="background:#A855F7"></span>
+      </div>
+    </button>
+
+    <button class="mode-btn" data-mode="deuteranopia">
+      <span class="label">Deuteranopia</span>
+      <div class="palette" style="filter:url(#f-deuteranopia)">
+        <span class="swatch" style="background:#EF4444"></span>
+        <span class="swatch" style="background:#F97316"></span>
+        <span class="swatch" style="background:#EAB308"></span>
+        <span class="swatch" style="background:#22C55E"></span>
+        <span class="swatch" style="background:#3B82F6"></span>
+        <span class="swatch" style="background:#A855F7"></span>
+      </div>
+    </button>
+
+    <button class="mode-btn" data-mode="protanopia">
+      <span class="label">Protanopia</span>
+      <div class="palette" style="filter:url(#f-protanopia)">
+        <span class="swatch" style="background:#EF4444"></span>
+        <span class="swatch" style="background:#F97316"></span>
+        <span class="swatch" style="background:#EAB308"></span>
+        <span class="swatch" style="background:#22C55E"></span>
+        <span class="swatch" style="background:#3B82F6"></span>
+        <span class="swatch" style="background:#A855F7"></span>
+      </div>
+    </button>
+
+    <button class="mode-btn" data-mode="tritanopia">
+      <span class="label">Tritanopia</span>
+      <div class="palette" style="filter:url(#f-tritanopia)">
+        <span class="swatch" style="background:#EF4444"></span>
+        <span class="swatch" style="background:#F97316"></span>
+        <span class="swatch" style="background:#EAB308"></span>
+        <span class="swatch" style="background:#22C55E"></span>
+        <span class="swatch" style="background:#3B82F6"></span>
+        <span class="swatch" style="background:#A855F7"></span>
+      </div>
+    </button>
+
+    <button class="mode-btn" data-mode="achromatopsia">
+      <span class="label">Achromatopsia</span>
+      <div class="palette" style="filter:url(#f-achromatopsia)">
+        <span class="swatch" style="background:#EF4444"></span>
+        <span class="swatch" style="background:#F97316"></span>
+        <span class="swatch" style="background:#EAB308"></span>
+        <span class="swatch" style="background:#22C55E"></span>
+        <span class="swatch" style="background:#3B82F6"></span>
+        <span class="swatch" style="background:#A855F7"></span>
+      </div>
+    </button>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
