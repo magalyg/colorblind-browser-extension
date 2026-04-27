@@ -32,6 +32,8 @@
 
     .modes { display: flex; flex-direction: column; gap: 6px; }
 
+    .mode-item { display: flex; flex-direction: column; }
+
     .mode-btn {
       display: flex;
       align-items: center;
@@ -43,6 +45,8 @@
       border-radius: 8px;
       cursor: pointer;
       transition: border-color 0.15s, background 0.15s;
+      text-align: left;
+      gap: 8px;
     }
 
     .mode-btn:hover { border-color: #93c5fd; background: #eff6ff; }
@@ -50,33 +54,113 @@
     .mode-btn.active {
       background: #2563eb;
       border-color: #2563eb;
+      border-radius: 8px 8px 0 0;
     }
+
+    .mode-info { flex: 1; min-width: 0; }
 
     .mode-btn .label {
       font-size: 13px;
       font-weight: 500;
       color: #1e293b;
+      display: block;
+    }
+
+    .mode-btn .sublabel {
+      font-size: 10px;
+      color: #64748b;
+      margin-top: 1px;
+      display: block;
     }
 
     .mode-btn.active .label { color: #fff; }
+    .mode-btn.active .sublabel { color: #bfdbfe; }
 
     .palette {
       display: flex;
-      gap: 5px;
+      gap: 4px;
       flex-shrink: 0;
     }
 
     .swatch {
-      width: 18px;
-      height: 18px;
+      width: 16px;
+      height: 16px;
       border-radius: 50%;
       display: inline-block;
       border: 1px solid rgba(0,0,0,0.08);
     }
+
+    /* Severity slider panel */
+    .severity-panel {
+      display: none;
+      background: #1d4ed8;
+      border: 1.5px solid #2563eb;
+      border-top: none;
+      border-radius: 0 0 8px 8px;
+      padding: 8px 12px 12px;
+    }
+
+    .severity-panel.visible { display: block; }
+
+    .severity-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+
+    .severity-row .end-label {
+      font-size: 10px;
+      color: #93c5fd;
+      font-weight: 500;
+    }
+
+    .severity-row .severity-value {
+      font-size: 11px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .severity-slider {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 4px;
+      border-radius: 2px;
+      background: linear-gradient(
+        to right,
+        #60a5fa 0%,
+        #60a5fa var(--fill, 100%),
+        #1e3a8a var(--fill, 100%),
+        #1e3a8a 100%
+      );
+      outline: none;
+      cursor: pointer;
+    }
+
+    .severity-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #fff;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.35);
+      cursor: pointer;
+    }
+
+    .severity-slider::-moz-range-thumb {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #fff;
+      border: none;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.35);
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
-  <!-- Inline SVG filter definitions — referenced by each palette row -->
+  <!-- Inline SVG filter definitions — referenced by palette swatches -->
   <svg style="position:absolute;width:0;height:0;overflow:hidden" xmlns="http://www.w3.org/2000/svg">
     <defs>
       <filter id="f-deuteranopia">
@@ -101,7 +185,9 @@
 
   <div class="modes">
     <button class="mode-btn" data-mode="none">
-      <span class="label">None</span>
+      <div class="mode-info">
+        <span class="label">None</span>
+      </div>
       <div class="palette">
         <span class="swatch" style="background:#EF4444"></span>
         <span class="swatch" style="background:#F97316"></span>
@@ -112,53 +198,109 @@
       </div>
     </button>
 
-    <button class="mode-btn" data-mode="deuteranopia">
-      <span class="label">Deuteranopia</span>
-      <div class="palette" style="filter:url(#f-deuteranopia)">
-        <span class="swatch" style="background:#EF4444"></span>
-        <span class="swatch" style="background:#F97316"></span>
-        <span class="swatch" style="background:#EAB308"></span>
-        <span class="swatch" style="background:#22C55E"></span>
-        <span class="swatch" style="background:#3B82F6"></span>
-        <span class="swatch" style="background:#A855F7"></span>
+    <div class="mode-item">
+      <button class="mode-btn" data-mode="deuteranopia">
+        <div class="mode-info">
+          <span class="label">Deuteranopia</span>
+          <span class="sublabel">Deuteranomaly (mild) · green weakness</span>
+        </div>
+        <div class="palette" style="filter:url(#f-deuteranopia)">
+          <span class="swatch" style="background:#EF4444"></span>
+          <span class="swatch" style="background:#F97316"></span>
+          <span class="swatch" style="background:#EAB308"></span>
+          <span class="swatch" style="background:#22C55E"></span>
+          <span class="swatch" style="background:#3B82F6"></span>
+          <span class="swatch" style="background:#A855F7"></span>
+        </div>
+      </button>
+      <div class="severity-panel" id="panel-deuteranopia">
+        <div class="severity-row">
+          <span class="end-label">Mild</span>
+          <span class="severity-value" id="val-deuteranopia">100%</span>
+          <span class="end-label">Severe</span>
+        </div>
+        <input type="range" class="severity-slider" id="slider-deuteranopia"
+               data-mode="deuteranopia" min="1" max="100" value="100" style="--fill:100%">
       </div>
-    </button>
+    </div>
 
-    <button class="mode-btn" data-mode="protanopia">
-      <span class="label">Protanopia</span>
-      <div class="palette" style="filter:url(#f-protanopia)">
-        <span class="swatch" style="background:#EF4444"></span>
-        <span class="swatch" style="background:#F97316"></span>
-        <span class="swatch" style="background:#EAB308"></span>
-        <span class="swatch" style="background:#22C55E"></span>
-        <span class="swatch" style="background:#3B82F6"></span>
-        <span class="swatch" style="background:#A855F7"></span>
+    <div class="mode-item">
+      <button class="mode-btn" data-mode="protanopia">
+        <div class="mode-info">
+          <span class="label">Protanopia</span>
+          <span class="sublabel">Protanomaly (mild) · red weakness</span>
+        </div>
+        <div class="palette" style="filter:url(#f-protanopia)">
+          <span class="swatch" style="background:#EF4444"></span>
+          <span class="swatch" style="background:#F97316"></span>
+          <span class="swatch" style="background:#EAB308"></span>
+          <span class="swatch" style="background:#22C55E"></span>
+          <span class="swatch" style="background:#3B82F6"></span>
+          <span class="swatch" style="background:#A855F7"></span>
+        </div>
+      </button>
+      <div class="severity-panel" id="panel-protanopia">
+        <div class="severity-row">
+          <span class="end-label">Mild</span>
+          <span class="severity-value" id="val-protanopia">100%</span>
+          <span class="end-label">Severe</span>
+        </div>
+        <input type="range" class="severity-slider" id="slider-protanopia"
+               data-mode="protanopia" min="1" max="100" value="100" style="--fill:100%">
       </div>
-    </button>
+    </div>
 
-    <button class="mode-btn" data-mode="tritanopia">
-      <span class="label">Tritanopia</span>
-      <div class="palette" style="filter:url(#f-tritanopia)">
-        <span class="swatch" style="background:#EF4444"></span>
-        <span class="swatch" style="background:#F97316"></span>
-        <span class="swatch" style="background:#EAB308"></span>
-        <span class="swatch" style="background:#22C55E"></span>
-        <span class="swatch" style="background:#3B82F6"></span>
-        <span class="swatch" style="background:#A855F7"></span>
+    <div class="mode-item">
+      <button class="mode-btn" data-mode="tritanopia">
+        <div class="mode-info">
+          <span class="label">Tritanopia</span>
+          <span class="sublabel">Tritanomaly (mild) · blue-yellow weakness</span>
+        </div>
+        <div class="palette" style="filter:url(#f-tritanopia)">
+          <span class="swatch" style="background:#EF4444"></span>
+          <span class="swatch" style="background:#F97316"></span>
+          <span class="swatch" style="background:#EAB308"></span>
+          <span class="swatch" style="background:#22C55E"></span>
+          <span class="swatch" style="background:#3B82F6"></span>
+          <span class="swatch" style="background:#A855F7"></span>
+        </div>
+      </button>
+      <div class="severity-panel" id="panel-tritanopia">
+        <div class="severity-row">
+          <span class="end-label">Mild</span>
+          <span class="severity-value" id="val-tritanopia">100%</span>
+          <span class="end-label">Severe</span>
+        </div>
+        <input type="range" class="severity-slider" id="slider-tritanopia"
+               data-mode="tritanopia" min="1" max="100" value="100" style="--fill:100%">
       </div>
-    </button>
+    </div>
 
-    <button class="mode-btn" data-mode="achromatopsia">
-      <span class="label">Achromatopsia</span>
-      <div class="palette" style="filter:url(#f-achromatopsia)">
-        <span class="swatch" style="background:#EF4444"></span>
-        <span class="swatch" style="background:#F97316"></span>
-        <span class="swatch" style="background:#EAB308"></span>
-        <span class="swatch" style="background:#22C55E"></span>
-        <span class="swatch" style="background:#3B82F6"></span>
-        <span class="swatch" style="background:#A855F7"></span>
+    <div class="mode-item">
+      <button class="mode-btn" data-mode="achromatopsia">
+        <div class="mode-info">
+          <span class="label">Achromatopsia</span>
+          <span class="sublabel">Achromatomaly (mild) · full color loss</span>
+        </div>
+        <div class="palette" style="filter:url(#f-achromatopsia)">
+          <span class="swatch" style="background:#EF4444"></span>
+          <span class="swatch" style="background:#F97316"></span>
+          <span class="swatch" style="background:#EAB308"></span>
+          <span class="swatch" style="background:#22C55E"></span>
+          <span class="swatch" style="background:#3B82F6"></span>
+          <span class="swatch" style="background:#A855F7"></span>
+        </div>
+      </button>
+      <div class="severity-panel" id="panel-achromatopsia">
+        <div class="severity-row">
+          <span class="end-label">Mild</span>
+          <span class="severity-value" id="val-achromatopsia">100%</span>
+          <span class="end-label">Severe</span>
+        </div>
+        <input type="range" class="severity-slider" id="slider-achromatopsia"
+               data-mode="achromatopsia" min="1" max="100" value="100" style="--fill:100%">
       </div>
-    </button>
+    </div>
   </div>
 
   <script src="popup.js"></script>
